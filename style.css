@@ -1,0 +1,57 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    background-image: url("images/bg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: Arial, sans-serif;
+}
+.navbar {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Vertically center */
+    align-items: center;
+    gap: 10px; /* Smaller gap between buttons */
+    width: 70px;
+    height: 100vh;
+}
+.navbar img {
+    height: 40px; /* Adjust button size */
+    cursor: pointer;
+   transition: transform 0.2s;
+}
+
+.navbar img:hover {
+    transform: scale(1.1); /* Slight hover effect */
+}
+.login-container {
+    height: 100vh;
+    background: url('../images/bg.png') no-repeat center center fixed;
+    background-size: cover;
+}
+.content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+.dashboard-section {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+.dashboard-section h2 {
+    margin: 0 0 15px;
+    font-size: 24px;
+    color: #333;
+}
+.table {
+    background-color: white;
+}
