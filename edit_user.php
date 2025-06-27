@@ -1,61 +1,15 @@
 <?php
-// Connect to the database
 $conn = new mysqli("localhost", "root", "", "event_db");
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Get user_id from URL
-if (!isset($_GET['user_id'])) {
-    echo "User ID not provided.";
-    exit;
-}
-
-$user_id = $_GET['user_id'];
-$user = null;
-
-// Fetch user details
-$sql = "SELECT * FROM users WHERE user_id = ?";
-$stmt = $conn->prepare($sql);
+$user_id = $_GET['user_id'] ?? '';
+$stmt = $conn->prepare("SELECT * FROM users WHERE user_id = ?");
 $stmt->bind_param("s", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
-if ($result->num_rows === 1) {
-    $user = $result->fetch_assoc();
-} else {
-    echo "User not found.";
-    exit;
-}
-$stmt->close();
-
-// Handle form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
-    $role = $_POST['role'];
-    $newPassword = $_POST['password'];
-
-    // Update query
-    if (!empty($newPassword)) {
-        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-        $updateSQL = "UPDATE users SET email = ?, role = ?, password = ? WHERE user_id = ?";
-        $updateStmt = $conn->prepare($updateSQL);
-        $updateStmt->bind_param("ssss", $email, $role, $hashedPassword, $user_id);
-    } else {
-        $updateSQL = "UPDATE users SET email = ?, role = ? WHERE user_id = ?";
-        $updateStmt = $conn->prepare($updateSQL);
-        $updateStmt->bind_param("sss", $email, $role, $user_id);
-    }
-
-    if ($updateStmt->execute()) {
-        header("Location: admin_dashboard.php");
-        exit;
-    } else {
-        echo "<p class='text-danger'>Error updating user: " . $conn->error . "</p>";
-    }
-    $updateStmt->close();
-}
-
-$conn->close();
+$user = $result->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
@@ -66,26 +20,30 @@ $conn->close();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="container mt-5">
-    <h2>Edit User - <?php echo htmlspecialchars($user_id); ?></h2>
-    <form method="POST">
+<div class="container mt-5" style="max-width: 500px;">
+    <h2 class="mb-4 text-center">Edit User</h2>
+    <form action="update_user.php" method="POST" class="bg-light p-4 rounded shadow">
+        <input type="hidden" name="user_id" value="<?= htmlspecialchars($user['user_id']) ?>">
+
         <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" class="form-control" required>
+            <label for="full_name" class="form-label">Full Name</label>
+            <input type="text" name="full_name" id="full_name" class="form-control" value="<?= htmlspecialchars($user['full_name']) ?>" required>
         </div>
+
         <div class="mb-3">
-            <label class="form-label">Role</label>
-            <select name="role" class="form-control" required>
-                <option value="student" <?php if ($user['role'] === 'student') echo 'selected'; ?>>Student</option>
-                <option value="admin" <?php if ($user['role'] === 'admin') echo 'selected'; ?>>Admin</option>
+            <label for="email" class="form-label">Email</label>
+            <input type="email" name="email" id="email" class="form-control" value="<?= htmlspecialchars($user['email']) ?>" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="role" class="form-label">Role</label>
+            <select name="role" id="role" class="form-control" required>
+                <option value="student" <?= $user['role'] === 'student' ? 'selected' : '' ?>>Student</option>
+                <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
             </select>
         </div>
-        <div class="mb-3">
-            <label class="form-label">New Password (leave blank to keep current)</label>
-            <input type="password" name="password" class="form-control">
-        </div>
-        <button type="submit" class="btn btn-primary">Update User</button>
-        <a href="admin_dashboard.php" class="btn btn-secondary">Cancel</a>
+
+        <button type="submit" class="btn btn-primary w-100">Update</button>
     </form>
 </div>
 </body>

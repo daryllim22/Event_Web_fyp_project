@@ -8,10 +8,12 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="navbar">
-        <a href="admin_dashboard.php"><img src="images/user.png" alt="User"></a>
-        <a href="event_db.php"><img src="images/events.png" alt="Events"></a>
-        <a href="login.php"><img src="images/logout.png" alt="Logout"></a>
+    <nav class="navbar d-flex justify-content-center gap-4 py-2 bg-light">
+        <a href="admin_dashboard.php"><img src="images/user.png" alt="User" title="Admin Dashboard"></a>
+        <a href="event_db.php"><img src="images/events.png" alt="Events" title="Event Database"></a>
+        <a href="view_proposals.php"><img src="images/proposal.png" alt="Proposals" title="View Proposals"></a>
+        <a href="view_participants.php"><img src="images/participants.png" alt="Participants" title="Event Participants"></a>
+        <a href="login.php"><img src="images/logout.png" alt="Logout" title="Logout"></a>
     </nav>
 
     <div class="content">
@@ -20,6 +22,7 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
+                        <th>Full Name</th>
                         <th>User ID</th>
                         <th>Email</th>
                         <th>Role</th>
@@ -33,12 +36,13 @@
                         die("Connection failed: " . $conn->connect_error);
                     }
 
-                    $sql = "SELECT user_id, email, role FROM users";
+                    $sql = "SELECT full_name, user_id, email, role FROM users";
                     $result = $conn->query($sql);
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             echo "<tr>";
+                            echo "<td>" . htmlspecialchars($row['full_name']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['user_id']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['email']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['role']) . "</td>";
@@ -49,7 +53,7 @@
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='4'>No users found.</td></tr>";
+                        echo "<tr><td colspan='5'>No users found.</td></tr>";
                     }
 
                     $conn->close();

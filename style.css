@@ -9,6 +9,7 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-attachment: fixed;
     font-family: Arial, sans-serif;
 }
 .navbar {
@@ -19,7 +20,7 @@ body {
     justify-content: center; /* Vertically center */
     align-items: center;
     gap: 10px; /* Smaller gap between buttons */
-    width: 70px;
+    width: 200px;
     height: 100vh;
 }
 .navbar img {
